@@ -1,0 +1,19 @@
+[package]
+name = "taco"
+version = "0.1.0"
+edition = "2021"
+description = "Tool to automatically download and decrypt 64 bits iOS firmware images."
+repository = "https://github.com/matteyeux/taco"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+clap = { version = "3.1.6", features = ["derive"] }
+partialzip = { path = "src/partialzip", version = "0.6.1"}
+regex = "1.5.5"
+scraper = "0.12.0"
+select = "0.5.0"
+stybulate = "1.1.2"
