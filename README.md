@@ -24,6 +24,8 @@ SUBCOMMANDS:
 
 ### Run
 
+Make sure to have [img4](https://github.com/xerub/img4) available somewhere in your `$PATH`.
+
 ```
 λ ~ » taco decrypt iPad7,3 15.1 iBoot.j207.RELEASE.im4p  
 [i] Downloading iBoot.j207.RELEASE.im4p

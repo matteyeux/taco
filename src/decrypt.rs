@@ -115,7 +115,7 @@ fn decrypt_img4(file: String, output: String, ivkey: String) {
     Command::new("img4")
         .args(["-i", &file, &output, &ivkey])
         .output()
-        .expect("failed to execute process");
+        .expect("failed to execute process is img4 in your $PATH ?");
 }
 
 /// Main decrypt function.
