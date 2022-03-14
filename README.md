@@ -1,6 +1,6 @@
 # taco
 
-A tool to download and decrypt a 64 bits iOS firmware image
+A tool to download and decrypt a 64 bits iOS firmware images
 
 ### Usage
 ```
