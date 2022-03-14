@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Tool to automatically download and decrypt 64 bits iOS firmware images."
 repository = "https://github.com/matteyeux/taco"
-
+license = "Mozilla Public License 2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
