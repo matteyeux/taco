@@ -1,4 +1,3 @@
-extern crate partialzip;
 use crate::Device;
 use partialzip::partzip::PartialZip;
 use std::fs::File;
