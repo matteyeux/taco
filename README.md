@@ -1,6 +1,9 @@
 # taco
 
+[![Crates.io](https://img.shields.io/crates/v/taco)](https://crates.io/crates/taco)
+
 A tool to download and decrypt 64 bits iOS firmware images
+
 
 ### Usage
 ```
