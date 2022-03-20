@@ -40,6 +40,13 @@ async fn main() {
                         .required(false)
                         .help("use local file instead of downloading it"),
                 )
+                .arg(
+                    Arg::new("beta")
+                        .short('b')
+                        .takes_value(false)
+                        .required(false)
+                        .help("Specify it's a beta firmware. Make sure iOS version is a buildid"),
+                )
                 .arg_required_else_help(true),
         )
         .subcommand(
@@ -48,6 +55,13 @@ async fn main() {
                 .arg(arg!(<device> "device model"))
                 .arg(arg!(<version> "iOS version"))
                 .arg(arg!(<file> "firmware image file"))
+                .arg(
+                    Arg::new("beta")
+                        .short('b')
+                        .takes_value(false)
+                        .required(false)
+                        .help("Specify it's a beta firmware. Make sure iOS version is a buildid"),
+                )
                 .arg_required_else_help(true),
         )
         .subcommand(
@@ -65,6 +79,7 @@ async fn main() {
                     args.value_of("device").expect("required").to_string(),
                     args.value_of("version").expect("version").to_string(),
                     args.value_of("file").expect("required").to_string(),
+                    args.is_present("beta"),
                 )
                 .await;
             }
@@ -82,6 +97,7 @@ async fn main() {
                 args.value_of("device").expect("required").to_string(),
                 args.value_of("version").expect("version").to_string(),
                 args.value_of("file").expect("required").to_string(),
+                args.is_present("beta"),
             )
             .await;
         }

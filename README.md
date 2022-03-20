@@ -55,10 +55,23 @@ Use already downloaded file:
 [i] Decrypting iBoot.j207.RELEASE.im4p to iBoot.j207.RELEASE.bin
 ```
 
+Download an decrypt iBoot from iOS 15.0 beta beta 6 for iPhone 12 Pro Max:
+```
+λ ~ » taco decrypt iPhone13,4 19A5325f iBoot.d54p.RELEASE.im4p -b
+   Compiling taco v0.1.1 (/home/mathieu/dev/taco)
+    Finished dev [unoptimized + debuginfo] target(s) in 3.85s
+     Running `target/debug/taco decrypt iPhone13,4 19A5325f iBoot.d54p.RELEASE.im4p -b`
+[i] Downloading iBoot.d54p.RELEASE.im4p
+[i] Grabbing keys for iPhone13,4/19A5325f
+[x] IV  : 12b3b21327cdde96ead01b3ee1605ee7
+[x] Key : a7b73b08cab0e699b94eeb057ed7800241e8db7d1618fa45de68ef8448746444
+[i] Decrypting iBoot.d54p.RELEASE.im4p to iBoot.d54p.RELEASE.bin
+```
+
 ### TODO 
 - [X] Specify keys without grabbing them from the wiki
 - [X] Use file locally
-- [ ] Support for beta iOS versions
+- [X] Support for beta iOS versions
 - [ ] [foreman](https://github.com/GuardianFirewall/foreman) Support
 - [ ] Decode and decrypt payload without [img4](https://github.com/xerub/img4)
 

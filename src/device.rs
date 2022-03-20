@@ -3,6 +3,11 @@ use reqwest::{Response, StatusCode};
 use serde::Deserialize;
 use std::error::Error;
 
+use crate::decrypt;
+use select::predicate::Name;
+
+use select::document::Document;
+
 #[derive(Deserialize, Debug, Clone)]
 pub struct Device {
     pub name: String,
@@ -74,6 +79,12 @@ impl Device {
 
     /// Parse json data to get the actual build ID of an iOS version.
     pub fn get_build_by_version(&mut self, ios_version: &String) -> Option<String> {
+        // Check if there is no dot, it's not an iOS version number
+        // So maybe a buildid
+        if !ios_version.contains(".") {
+            return Some(ios_version.to_string());
+        }
+
         for firmware in &self.firmwares {
             if ios_version == &firmware.version {
                 return Some(firmware.buildid.clone());
@@ -96,6 +107,34 @@ impl Device {
         for firmware in &self.firmwares {
             if buildid == firmware.buildid {
                 return Some(firmware.url.clone());
+            }
+        }
+
+        None
+    }
+
+    /// Parse The iPhone Wiki to get the correct URL
+    /// ipsw.me cannot get beta URLs.
+    /// At some point I'll try to understand what Siguza's pallas.sh does
+    /// And I'll rewrite it in Rust.
+    pub async fn get_beta_firmware_url(&mut self, buildid: &String) -> Option<String> {
+        let fw_keys_page =
+            decrypt::get_fw_keys_page(self.identifier.to_string(), buildid.to_string())
+                .await
+                .expect("Could not get firmware keys page");
+
+        let resp = reqwest::get(fw_keys_page).await.unwrap();
+        assert!(resp.status().is_success());
+
+        let document = Document::from(resp.text().await.unwrap().as_str());
+        for nodes in document.find(Name("span")) {
+            let id = nodes.attrs().next().unwrap().1;
+            if id == "keypage-download" {
+                for node in nodes.children() {
+                    let url = node.attrs().skip(2).next().unwrap().1;
+                    return Some(url.to_string());
+                }
+                break;
             }
         }
 

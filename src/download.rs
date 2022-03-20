@@ -5,7 +5,7 @@ use std::io::prelude::*;
 use std::process;
 
 /// Download a single file
-pub async fn download(model: String, version: String, file: String) {
+pub async fn download(model: String, version: String, file: String, beta: bool) {
     let mut device = match Device::new(&model).await {
         Ok(device) => device,
         Err(err) => {
@@ -14,8 +14,19 @@ pub async fn download(model: String, version: String, file: String) {
         }
     };
 
-    let fw_url = match device.get_firmware_url(&version) {
-        Some(fw_url) => fw_url,
+    let url: Option<String>;
+    if beta {
+        if version.contains(".") {
+            eprintln!("[e] Specify buildid instead of iOS version for beta");
+            process::exit(1);
+        }
+        url = device.get_beta_firmware_url(&version).await;
+    } else {
+        url = device.get_firmware_url(&version);
+    }
+
+    let fw_url = match url {
+        Some(url) => url,
         None => {
             eprintln!("[e] Could not get firmware URL for iOS {version}");
             return;

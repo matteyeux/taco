@@ -1,6 +1,6 @@
 [package]
 name = "taco"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Tool to automatically download and decrypt 64 bits iOS firmware images."
 repository = "https://github.com/matteyeux/taco"
