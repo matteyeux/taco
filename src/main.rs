@@ -11,7 +11,7 @@ mod decrypt;
 mod download;
 mod info;
 
-use clap::{arg, Command};
+use clap::{arg, Arg, Command};
 
 #[tokio::main]
 async fn main() {
@@ -26,6 +26,20 @@ async fn main() {
                 .arg(arg!(<device> "device model"))
                 .arg(arg!(<version> "iOS version"))
                 .arg(arg!(<file> "firmware image file"))
+                .arg(
+                    Arg::new("key")
+                        .short('k')
+                        .takes_value(true)
+                        .required(false)
+                        .help("specify key instead of grabbing one from the wiki"),
+                )
+                .arg(
+                    Arg::new("local")
+                        .short('l')
+                        .takes_value(false)
+                        .required(false)
+                        .help("use local file instead of downloading it"),
+                )
                 .arg_required_else_help(true),
         )
         .subcommand(
@@ -46,16 +60,20 @@ async fn main() {
 
     match matches.subcommand() {
         Some(("decrypt", args)) => {
-            download::download(
-                args.value_of("device").expect("required").to_string(),
-                args.value_of("version").expect("version").to_string(),
-                args.value_of("file").expect("required").to_string(),
-            )
-            .await;
+            if !args.is_present("local") {
+                download::download(
+                    args.value_of("device").expect("required").to_string(),
+                    args.value_of("version").expect("version").to_string(),
+                    args.value_of("file").expect("required").to_string(),
+                )
+                .await;
+            }
+
             decrypt::decrypt(
                 args.value_of("device").expect("required").to_string(),
                 args.value_of("version").expect("required").to_string(),
                 args.value_of("file").expect("required").to_string(),
+                args.value_of("key"),
             )
             .await;
         }

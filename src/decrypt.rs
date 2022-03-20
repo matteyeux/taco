@@ -6,6 +6,7 @@ use select::document::Document;
 use select::predicate::{Class, Name};
 
 use std::collections::HashMap;
+use std::path::Path;
 use std::process::Command;
 
 /// Make an HTTP request to the iPhone Wiki to find the actual
@@ -123,35 +124,55 @@ fn decrypt_img4(file: String, output: String, ivkey: String) {
 /// Grabs the fw keys page on The iPhone Wiki
 /// Scraps the Wiki page to get the keys for the said device
 /// Decrypts the file with xerub's img4 tool
-pub async fn decrypt(model: String, ios_version: String, file: String) {
-    let mut device = match Device::new(&model).await {
-        Ok(device) => device,
-        Err(err) => {
-            println!("{err}");
-            return;
-        }
-    };
+pub async fn decrypt(model: String, ios_version: String, file: String, key: Option<&str>) {
+    let ivkey: String;
 
-    // get build ID to find the fw keys page
-    let buildid = match device.get_build_by_version(&ios_version) {
-        Some(build) => build,
-        None => {
-            eprintln!("[e] Could not get buildid for iOS {ios_version}");
-            return;
-        }
-    };
+    if key.is_none() {
+        let mut device = match Device::new(&model).await {
+            Ok(device) => device,
+            Err(err) => {
+                println!("{err}");
+                return;
+            }
+        };
 
-    println!("[i] Grabbing keys for {model}/{buildid}");
+        // get build ID to find the fw keys page
+        let buildid = match device.get_build_by_version(&ios_version) {
+            Some(build) => build,
+            None => {
+                eprintln!("[e] Could not get buildid for iOS {ios_version}");
+                return;
+            }
+        };
 
-    // Get the fw keys page to scrap
-    let fw_keys_page = get_fw_keys_page(model, buildid)
-        .await
-        .expect("Could not get firmware keys page");
+        println!("[i] Grabbing keys for {model}/{buildid}");
 
-    // Get keys for the file to decrypt
-    let ivkey = grab_keys(fw_keys_page, &file).await;
+        // Get the fw keys page to scrap
+        let fw_keys_page = get_fw_keys_page(model, buildid)
+            .await
+            .expect("Could not get firmware keys page");
+
+        // Get keys for the file to decrypt
+        ivkey = grab_keys(fw_keys_page, &file).await;
+    } else {
+        ivkey = key.unwrap().to_string();
+    }
+
+    if ivkey.len() != 96 {
+        eprintln!(
+            "[e] key size is wrong it should be 96 instead of {}",
+            ivkey.len()
+        );
+        return;
+    }
+
     println!("[x] IV  : {}", &ivkey[..32]);
     println!("[x] Key : {}", &ivkey[32..]);
+
+    if !Path::new(&file).exists() {
+        eprintln!("[e] {file} does not exist");
+        return;
+    }
 
     // output filename
     let output = file.replace("im4p", "bin");

@@ -1,11 +1,10 @@
-use stybulate::{Table, Style, Cell, Headers};
-use std::process;
 use crate::Device;
+use std::process;
+use stybulate::{Cell, Headers, Style, Table};
 
 /// Print device info in a table, nothing funny just
 /// here in case someone wants to use this feature some day.
 pub async fn info(model: String) {
-
     let device = match Device::new(&model).await {
         Ok(device) => device,
         Err(err) => {
@@ -25,6 +24,7 @@ pub async fn info(model: String) {
             vec![Cell::from("BDID"), Cell::Int(device.bdid as i32)],
         ],
         Some(Headers::from(vec!["Type", "Value"])),
-    ).tabulate();
+    )
+    .tabulate();
     println!("{table}");
 }
