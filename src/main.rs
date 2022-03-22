@@ -9,9 +9,9 @@ use device::Device;
 
 mod decrypt;
 mod download;
-mod info;
 
 use clap::{arg, Arg, Command};
+use std::process;
 
 #[tokio::main]
 async fn main() {
@@ -102,7 +102,16 @@ async fn main() {
             .await;
         }
         Some(("info", args)) => {
-            info::info(args.value_of("device").expect("required").to_string()).await;
+            let model = args.value_of("device").expect("required").to_string();
+            let mut device = match Device::new(&model).await {
+                Ok(device) => device,
+                Err(err) => {
+                    println!("{err}");
+                    process::exit(1);
+                }
+            };
+
+            device.print_info();
         }
         _ => unreachable!(),
     }

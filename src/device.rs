@@ -7,40 +7,24 @@ use crate::decrypt;
 use select::predicate::Name;
 
 use select::document::Document;
+use stybulate::{Cell, Headers, Style, Table};
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Clone)]
 pub struct Device {
-    pub name: String,
-    pub identifier: String,
-    pub firmwares: Vec<Firmware>,
-    pub boards: Vec<Board>,
-    pub boardconfig: String,
-    pub platform: String,
-    pub cpid: u32,
-    pub bdid: u8,
+    name: String,
+    identifier: String,
+    firmwares: Vec<Firmware>,
+    boardconfig: String,
+    platform: String,
+    cpid: u32,
+    bdid: u8,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Clone)]
 pub struct Firmware {
-    pub identifier: String,
-    pub version: String,
-    pub buildid: String,
-    pub sha1sum: String,
-    pub md5sum: String,
-    pub sha256sum: String,
-    pub filesize: usize,
-    pub url: String,
-    pub releasedate: String,
-    pub uploaddate: String,
-    pub signed: bool,
-}
-
-#[derive(Deserialize, Debug, Clone)]
-pub struct Board {
-    pub boardconfig: String,
-    pub platform: String,
-    pub cpid: u32,
-    pub bdid: u8,
+    version: String,
+    buildid: String,
+    url: String,
 }
 
 /// Download json from ipsw.me and return a Response object
@@ -94,7 +78,7 @@ impl Device {
         None
     }
 
-    /// Get firmware URL of an iOS version for a device.
+    /// Get firmware URL of an iOS version for a self.
     pub fn get_firmware_url(&mut self, ios_version: &String) -> Option<String> {
         let buildid = match self.get_build_by_version(ios_version) {
             Some(build) => build,
@@ -139,5 +123,24 @@ impl Device {
         }
 
         None
+    }
+
+    /// Print device info in a table, nothing funny just
+    /// here in case someone wants to use this feature some day.
+    pub fn print_info(&mut self) {
+        let table = Table::new(
+            Style::Fancy,
+            vec![
+                vec![Cell::from("Name"), Cell::from(&self.name)],
+                vec![Cell::from("Identifier"), Cell::from(&self.identifier)],
+                vec![Cell::from("Boardconfig"), Cell::from(&self.boardconfig)],
+                vec![Cell::from("Platform"), Cell::from(&self.platform)],
+                vec![Cell::from("CPID"), Cell::Int(self.cpid as i32)],
+                vec![Cell::from("BDID"), Cell::Int(self.bdid as i32)],
+            ],
+            Some(Headers::from(vec!["Type", "Value"])),
+        )
+        .tabulate();
+        println!("{table}");
     }
 }
