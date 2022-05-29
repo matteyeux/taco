@@ -27,7 +27,7 @@ SUBCOMMANDS:
 
 ### Run
 
-Make sure to have [img4](https://github.com/xerub/img4) available somewhere in your `$PATH`.
+Make sure to have [img4](https://github.com/xerub/img4lib) available somewhere in your `$PATH`.
 
 Simple usage:
 ```
@@ -76,7 +76,7 @@ Download an decrypt iBoot from iOS 15.0 beta beta 6 for iPhone 12 Pro Max:
 - [X] Use file locally
 - [X] Support for beta iOS versions
 - [ ] [foreman](https://github.com/GuardianFirewall/foreman) Support
-- [ ] Decode and decrypt payload without [img4](https://github.com/xerub/img4)
+- [ ] Decode and decrypt payload without [img4](https://github.com/xerub/img4lib)
 
 ### Credits
 
