@@ -74,35 +74,35 @@ async fn main() {
 
     match matches.subcommand() {
         Some(("decrypt", args)) => {
-            if !args.is_present("local") {
+            if !args.contains_id("local") {
                 download::download(
-                    args.value_of("device").expect("required").to_string(),
-                    args.value_of("version").expect("version").to_string(),
-                    args.value_of("file").expect("required").to_string(),
-                    args.is_present("beta"),
+                    args.get_one::<String>("device").expect("required").to_string(),
+                    args.get_one::<String>("version").expect("version").to_string(),
+                    args.get_one::<String>("file").expect("required").to_string(),
+                    args.contains_id("beta"),
                 )
                 .await;
             }
 
             decrypt::decrypt(
-                args.value_of("device").expect("required").to_string(),
-                args.value_of("version").expect("required").to_string(),
-                args.value_of("file").expect("required").to_string(),
+                args.get_one::<String>("device").expect("required").to_string(),
+                args.get_one::<String>("version").expect("required").to_string(),
+                args.get_one::<String>("file").expect("required").to_string(),
                 args.value_of("key"),
             )
             .await;
         }
         Some(("download", args)) => {
             download::download(
-                args.value_of("device").expect("required").to_string(),
-                args.value_of("version").expect("version").to_string(),
-                args.value_of("file").expect("required").to_string(),
-                args.is_present("beta"),
+                args.get_one::<String>("device").expect("required").to_string(),
+                args.get_one::<String>("version").expect("version").to_string(),
+                args.get_one::<String>("file").expect("required").to_string(),
+                args.contains_id("beta"),
             )
             .await;
         }
         Some(("info", args)) => {
-            let model = args.value_of("device").expect("required").to_string();
+            let model = args.get_one::<String>("device").expect("required").to_string();
             let mut device = match Device::new(&model).await {
                 Ok(device) => device,
                 Err(err) => {
