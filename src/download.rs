@@ -48,7 +48,7 @@ pub async fn download(model: String, version: String, file: String, beta: bool) 
 
 /// Find a file in remote zip archive using partialzip
 fn pz_find(url: &str, filename: &str) -> Option<String> {
-    let mut pz = match PartialZip::new(url) {
+    let mut pz = match PartialZip::new(&url) {
         Ok(p) => p,
         Err(e) => {
             eprintln!("{e}");
@@ -66,7 +66,7 @@ fn pz_find(url: &str, filename: &str) -> Option<String> {
 
 /// Download file from remote zip archive using partialzip
 fn pz_download(url: &str, filename: &str, outfile: &str) -> Result<(), String> {
-    let mut pz = match PartialZip::new(url) {
+    let mut pz = match PartialZip::new(&url) {
         Ok(p) => p,
         Err(e) => return Err(format!("{e}")),
     };
