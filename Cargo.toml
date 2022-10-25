@@ -11,7 +11,7 @@ license-file = "LICENSE"
 reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
-clap = { version = "3.2.16", features = ["derive"] }
+clap = { version = "3.2.23", features = ["derive"] }
 partialzip = "1.1.2"
 regex = "1.6.0"
 scraper = "0.13.0"
