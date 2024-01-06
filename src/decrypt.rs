@@ -98,13 +98,13 @@ async fn grab_keys(url: String, file: &String) -> String {
         if key.contains(&target_val) {
             if key[key.len() - 3..key.len()].contains("-iv") {
                 iv = value;
+                ivkey.push_str(&iv);
             } else {
                 real_key = value
             }
         }
     }
 
-    ivkey.push_str(&iv);
     ivkey.push_str(&real_key);
     return ivkey;
 }
@@ -115,6 +115,12 @@ async fn grab_keys(url: String, file: &String) -> String {
 fn decrypt_img4(file: String, output: String, ivkey: String) {
     Command::new("img4")
         .args(["-i", &file, &output, &ivkey])
+        .output()
+        .expect("failed to execute process is img4 in your $PATH ?");
+}
+fn decrypt_dmg(file: String, output: String, ivkey: String) {
+    Command::new("dmg")
+        .args(["extract", &file, &output, "-k", &ivkey])
         .output()
         .expect("failed to execute process is img4 in your $PATH ?");
 }
@@ -158,25 +164,25 @@ pub async fn decrypt(model: String, ios_version: String, file: String, key: Opti
         ivkey = key.unwrap().to_string();
     }
 
-    if ivkey.len() != 96 {
-        eprintln!(
-            "[e] key size is wrong it should be 96 instead of {}",
-            ivkey.len()
-        );
-        return;
-    }
-
-    println!("[x] IV  : {}", &ivkey[..32]);
-    println!("[x] Key : {}", &ivkey[32..]);
-
     if !Path::new(&file).exists() {
         eprintln!("[e] {file} does not exist");
         return;
     }
 
-    // output filename
-    let output = file.replace("im4p", "bin");
+    if ivkey.len() != 96 {
+        println!("[x] Key : {}", &ivkey);
+        // output filename
+        let output = file.replace("dmg", "bin");
 
-    println!("[i] Decrypting {file} to {output}");
-    decrypt_img4(file, output, ivkey);
+        println!("[i] Decrypting {file} to {output}");
+        decrypt_dmg(file, output, ivkey);
+    } else {
+        println!("[x] IV  : {}", &ivkey[..32]);
+        println!("[x] Key : {}", &ivkey[32..]);
+        // output filename
+        let output = file.replace("im4p", "bin");
+
+        println!("[i] Decrypting {file} to {output}");
+        decrypt_img4(file, output, ivkey);
+    }
 }
